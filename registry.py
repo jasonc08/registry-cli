@@ -687,7 +687,7 @@ def get_newer_tags(registry, image_name, hours, tags_list):
     return result
 
 
-def get_datetime_tags(registry, image_name, tags_list, plain):
+def get_datetime_tags(registry, image_name, tags_list):
     def newer(tag):
         image_config = registry.get_tag_config(image_name, tag)
         if image_config == []:
@@ -702,8 +702,7 @@ def get_datetime_tags(registry, image_name, tags_list, plain):
             "datetime": parse(image_age).astimezone(tzutc())
         }
 
-    if not plain:
-        print('---------------------------------')
+ 
     p = ThreadPool(4)
     result = list(x for x in p.map(newer, tags_list) if x)
     p.close()
@@ -730,7 +729,7 @@ def get_ordered_tags(registry, image_name, tags_list, order_by_date=False):
         sorted_tags_by_date = sorted(
             tags_date,
             key=lambda x: x["datetime"]
-        )
+        , reverse=True)
         return [x["tag"] for x in sorted_tags_by_date]
 
     return sorted(tags_list, key=natural_keys)
